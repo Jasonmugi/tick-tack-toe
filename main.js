@@ -3,6 +3,7 @@ function init(){
     const rematchButton = document.querySelector(".rematch")
     const items = document.querySelectorAll('.item');
     const gridArray = Array.from(items);
+    const body = document.body;
     let tracking = [1,2,3,4,5,6,7,8,9];
     let currentPlayer = 'playerX';
 
@@ -11,6 +12,10 @@ function init(){
         item.addEventListener('click', (e)=> {
             //player Move
             const index = gridArray.indexOf(e.target);
+            if(
+                items[index].classList.contains('playerX') ||
+                items[index].classList.contains('computer')
+            ){ return}
             items[index].classList.add('playerX');
 
             //splicing the move from the tracking list
@@ -19,12 +24,38 @@ function init(){
             
             //check playr win
             if(winCheck('playerX', items)){
-                playerTitle.innerHTML = "playerX Wins!";
+                playerTitle.innerHTML = "You Win baby!";
                 document.body.classList.add('over');
+                setInterval(random_color, 252);
+                return;
             }
 
+            if(tracking.length == 0){
+                playerTitle.innerHTML = "It's A Draw"
+                document.body.classList.add('over');
+                setInterval(random_color, 700);
+                return
+            }
 
+            //computer move
+            const random = Math.floor(Math.random() * tracking.length)
+            const computerIndex = tracking[random];
+            items[computerIndex -1].classList.add('computer');
+            //splicing computer move from tracking list
+            tracking.splice(random, 1);
+
+            //check computer win
+            if(winCheck('computer', items)){
+                playerTitle.innerHTML = "Computer Beat You!";
+                document.body.classList.add('over');
+                setInterval(random_color, 490);
+                return;
+            }
         })
+    })
+
+    rematchButton.addEventListener('click', ()=>{
+        location.reload();
     })
 }
 init();
@@ -51,3 +82,12 @@ function winCheck(playerName, items){
     else if(check(2,4,6)) return true;
 
 };
+
+function random_color(){
+    r = Math.floor(Math.random() * 255);
+    g = Math.floor(Math.random() * 255);
+    b = Math.floor(Math.random() * 255);
+
+    document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+};
+
